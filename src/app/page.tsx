@@ -4,7 +4,7 @@ import Link from "next/link"
 
 export default async function Home() {
   const session = await auth()
-  console.log(session)
+  // console.log(session)
 
   return (
     <main className="container mx-auto py-4">

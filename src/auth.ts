@@ -1,5 +1,6 @@
 import clientPromise from "@/app/db/actions"
 import { MongoDBAdapter } from "@auth/mongodb-adapter"
+import type { NextAuthConfig } from "next-auth"
 import NextAuth from "next-auth"
 import GitHubProvider from "next-auth/providers/github"
 import GoogleProvider from "next-auth/providers/google"
@@ -12,6 +13,9 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
+  theme: {
+    logo: "/logo.png",
+  },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,

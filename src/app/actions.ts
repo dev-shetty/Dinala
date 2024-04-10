@@ -23,3 +23,14 @@ export async function setName(formData: FormData) {
 
   console.log(data)
 }
+
+export async function getSession(token: string) {
+  const db = await connectDB()
+  const result = await db
+    ?.collection("sessions")
+    .find({
+      sessionToken: token,
+    })
+    .toArray()
+  return result
+}

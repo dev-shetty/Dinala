@@ -4,6 +4,7 @@ if (!process.env.MONGO_URI) {
   throw new Error('Invalid/Missing environment variable: "MONGO_URI"')
 }
 
+const DB_NAME = process.env.DATABASE_NAME || "test"
 const uri = process.env.MONGO_URI
 const options = {}
 
@@ -26,6 +27,12 @@ if (process.env.NODE_ENV === "development") {
 } else {
   client = new MongoClient(uri, options)
   clientPromise = client.connect()
+}
+
+export async function connectDB() {
+  const client = await clientPromise
+  const db = client.db(DB_NAME)
+  return db
 }
 
 export default clientPromise
