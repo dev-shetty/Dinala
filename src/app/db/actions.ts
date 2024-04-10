@@ -1,20 +1,31 @@
-"use server"
-
 import { MongoClient } from "mongodb"
 
-export async function connectDB() {
-  try {
-    const MONGO_URI = process.env.MONGO_URI || ""
-    if (!MONGO_URI || MONGO_URI === "") {
-      throw new Error(
-        "Please define the MONGODB_URI environment variable inside .env.local"
-      )
-    }
-
-    const client = await MongoClient.connect(MONGO_URI)
-    const db = client.db("dinala-db")
-    return db
-  } catch (error) {
-    console.log(error)
-  }
+if (!process.env.MONGO_URI) {
+  throw new Error('Invalid/Missing environment variable: "MONGO_URI"')
 }
+
+const uri = process.env.MONGO_URI
+const options = {}
+
+let client
+let clientPromise: Promise<MongoClient>
+
+let globalWithMongo = global as typeof globalThis & {
+  _mongoClientPromise?: Promise<MongoClient>
+}
+
+if (process.env.NODE_ENV === "development") {
+  // In development mode, use a global variable so that the value
+  // is preserved across module reloads caused by HMR (Hot Module Replacement).
+
+  if (!globalWithMongo._mongoClientPromise) {
+    client = new MongoClient(uri, options)
+    globalWithMongo._mongoClientPromise = client.connect()
+  }
+  clientPromise = globalWithMongo._mongoClientPromise
+} else {
+  client = new MongoClient(uri, options)
+  clientPromise = client.connect()
+}
+
+export default clientPromise

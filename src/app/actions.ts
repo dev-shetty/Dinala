@@ -23,5 +23,3 @@ export async function setName(formData: FormData) {
 
   console.log(data)
 }
-
-
